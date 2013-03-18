@@ -1,0 +1,191 @@
+/*
+    Type:       Utility for preparing test data
+    Purpose:    Prepare Test data for Unit Test
+    User Story: 
+    Used By:    TriggerAccountTest
+    ---------------------------------------------------------------
+    History:
+    
+    1. Mouse Created on 2013-03-13
+*/
+@isTest
+Public class UtilTestData {
+    private static Map<String, Id> recordTypeMap;
+    private static Map<String, Id> roleMap;
+    private static Map<String, Id> profileMap;
+    
+    public final static String ACCOUNT_RT_PERSON_ACCOUNT = 'Person Account';
+    public final static String ACCOUNT_RT_DEALER = 'Dealer';
+    public final static Integer BATCH_SIZE = 101;
+    
+    // Initiate recordTypeMap
+    private static Map<String, Id> getRecordTypeMapInstance() {
+        if (recordTypeMap == null) {
+            recordTypeMap = new Map<String, Id>();
+            for (RecordType rt : [SELECT Id, Name, SobjectType FROM RecordType LIMIT 1000]) {
+                recordTypeMap.put(rt.Name + rt.SobjectType, rt.Id);
+            }
+        }
+        
+        return recordTypeMap;
+    }
+    
+    // Initiate roleMap
+    private static Map<String, Id> getUserRoleMapInstance() {
+        if (roleMap == null) {
+            roleMap = new Map<String, Id>();
+            for (UserRole role : [SELECT Id, Name FROM UserRole LIMIT 1000]) {
+                roleMap.put(role.Name, role.Id);
+            }
+        }
+        
+        return roleMap;
+    }
+    
+    // Initiate profileMap
+    private static Map<String, Id> getProfileMapInstance() {
+        if (profileMap == null) {
+            
+            profileMap = new Map<String, Id>();
+            for (Profile prof : [SELECT Id, Name FROM Profile LIMIT 1000]) {
+                profileMap.put(prof.Name, prof.Id);
+            }
+        }
+        
+        return profileMap;
+    }
+    
+    // Get UserRoleId by Role Name
+    private static Id getUserRoleId(String roleName) {
+        return roleMap.get(roleName);
+    }
+    
+    // Get ProfileId by Profile Name
+    private static Id getProfileId(String profileName) {
+        return profileMap.get(profileName);
+    }
+    
+    // Create Test User
+    private static User createUser(Id userRoleId, Id profileId) {
+        User usr = new User();
+        usr.UserName = 'test' + getRandomFix() + '@******.com';
+        usr.UserRoleId = userRoleId;
+        usr.ProfileId = profileId;
+        usr.LastName = 'Test User';
+        usr.Email = 'test001@******.com.full';
+        usr.Alias = 'test';
+        usr.TimeZoneSidKey = 'Asia/Shanghai';
+        usr.EmailEncodingKey = 'UTF-8';
+        usr.LanguageLocaleKey = 'en_US';
+        usr.localesidkey='en_US';
+        
+        insert usr;
+        return usr;
+    }
+
+    // Create Test User by Role Name and Profile Name
+    public static User createUser(String roleName, String profileName) {
+        return createUser(getUserRoleId(roleName), 
+                          getProfileId(profileName));
+    }
+
+    public static Sobject createSobject(Sobject so, String recordTypeName) {
+        so = initiateSobject(so, recordTypeName);
+        
+        insert so;
+        return so;
+    }
+
+    public static List<Sobject> createSobjects(List<Sobject> sos, String recordTypeName) {
+        sos = initiateSobjects(sos, recordTypeName);
+
+        insert sos;
+        return sos;
+    }
+    
+    // Initiate sobjects which number is BATCH_SIZE
+    public static List<Sobject> initiateSobjects(List<Sobject> sos, String recordTypeName) {
+        for (Sobject so : sos) {
+            so = initiateSobject(so, recordTypeName);
+        }
+
+        return sos;
+    }
+    
+    public static Sobject initiateSobject(Sobject so, String recordTypeName) {
+        if (so instanceof Account) {
+            if (recordTypeName == ACCOUNT_RT_PERSON_ACCOUNT) {
+                so = initiatePersonAccount((Account) so);
+            }
+            else if (recordTypeName == ACCOUNT_RT_DEALER) {
+                so = initiateDealer((Account) so);
+            }
+        }
+        else if (so instanceof Contact) {
+            so = initiateContact((Contact) so);
+        }
+        else if (so instanceof Opportunity) {
+            so = initiateVehicle((Opportunity) so);
+        }
+        else if (so instanceof Task) {
+            so = intitateTask((Task)so);
+        }
+        else if (so instanceof Event) {
+            so = initiateEvent((Event)so);
+        }
+        
+        return so;
+    }
+    
+    // Create Unsaved Dealer
+    private static Account initiateDealer(Account acc) {
+        acc.RecordTypeId = 
+            getRecordTypeMapInstance().get(UtilTestData.ACCOUNT_RT_DEALER  + 'Account');
+        acc.Dealer_Alternate_Name__c = 'Test Alternate';
+        acc.Phone = '010-00000000';
+        acc.Dealer_GC_Code__c = 'gc code';
+        acc.Dealer_GS_Code__c = 'gs code';
+        acc.Name = acc.Name == null ? 'test dealer' + getRandomFix() : acc.Name;
+        
+        return acc;
+    }
+    
+    // Create Unsaved Person Account
+    // N.B. Name is read only for Person Account
+    private static Account initiatePersonAccount(Account acc) {
+        acc.RecordTypeId = 
+            getRecordTypeMapInstance().get(UtilTestData.ACCOUNT_RT_PERSON_ACCOUNT + 'Account');
+        // acc.Name = 'Test';
+        acc.LastName = 'Customer';
+        acc.Gender__c = '0=Male';
+        acc.ZipCode__c = '200235';
+        acc.Type = acc.Type == null ? '0=Company' : acc.Type;
+        acc.Phone = acc.Phone == null ? '010-00000000' : acc.Phone; 
+        
+        return acc;
+    }
+
+    private static initiateOpportunity(Opportunity opp) {
+        opp.AccountId = opp.AccountId == null ? createSobject(new Account(), 
+            UtilTestData.ACCOUNT_RT_PERSON_ACCOUNT) : opp.AccountId;
+        opp.Name = opp.Name == null ? 'test' + getRandomFix() : opp.Name;
+        opp.Stage = opp.Stage == null ? 'Open' : opp.Stage;
+        opp.CloseDate = opp.CloseDate == null ? System.today() : opp.CloseDate;
+
+        return opp;
+    }
+
+    private static Integer getRandomFix() {
+        return Math.rint(Math.random() * 100000);
+    }
+
+    // Create Unsaved Contact
+    private static Contact initiateContact(Contact con) {
+        con.FirstName = 'Someone';
+        con.LastName = 'Benz';
+        con.AccountId = con.AccountId == null ? createSobject(new Account(), 
+            UtilTestData.ACCOUNT_RT_PERSON_ACCOUNT) : con.AccountId;
+
+        return con;
+    }
+}
