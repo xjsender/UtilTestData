@@ -1,35 +1,35 @@
 public class TriggerOpportunityTest {
   public static testMethod void testTriggerOpportunity() {
-		// Create a single Account Test Data
-		Account acc = (Account) UtilTestData.createSobject(new Account(), 
-			UtilTestData.ACCOUNT_RT_PERSON_ACCOUNT);
+	// Create a single Account Test Data
+	Account acc = (Account) UtilTestData.createSobject(new Account(), 
+		UtilTestData.ACCOUNT_RT_PERSON_ACCOUNT);
 
-		// Create a single Opportunity Test Data
-		Opportunity opp = (Opportunity) UtilTestData.createSobject(
-			new Opportunity(AccountId = acc.Id), null);
+	// Create a single Opportunity Test Data
+	Opportunity opp = (Opportunity) UtilTestData.createSobject(
+		new Opportunity(AccountId = acc.Id), null);
 
-		// Create lots of Account Test Records
-		List<Account> accs = new List<Account>();
-		for (Integer i = 0; i < UtilTestData.BATCH_SIZE; i++) {
-			accs.add(new Account(), UtilTestData.ACCOUNT_RT_PERSON_ACCOUNT);
-		}
-
-		accs = (List<Account>) UtilTestData.createSobjects(accs, 
-			UtilTestData.ACCOUNT_RT_PERSON_ACCOUNT);
-
-		// Create lots of Opportunities which AccountId is acc.Id
-		List<Opportunity> opps = new List<Opportunity>();
-		for (Integer i = 0; i < UtilTestData.BATCH_SIZE; i++) {
-			opps.add(new Opportunity(AccountId = acc.Id));
-		}
-
-		opps = (List<Opportunity>) UtilTestData.createSobjects(opps, null);
-
-		// Start Test
-		Test.startTest();
-
-
-		// Stop Test
-		Test.stopTest();
+	// Create lots of Account Test Records
+	List<Account> accs = new List<Account>();
+	for (Integer i = 0; i < UtilTestData.BATCH_SIZE; i++) {
+		accs.add(new Account(), UtilTestData.ACCOUNT_RT_PERSON_ACCOUNT);
 	}
+
+	accs = (List<Account>) UtilTestData.createSobjects(accs, 
+		UtilTestData.ACCOUNT_RT_PERSON_ACCOUNT);
+
+	// Create lots of Opportunities which AccountId is acc.Id
+	List<Opportunity> opps = new List<Opportunity>();
+	for (Integer i = 0; i < UtilTestData.BATCH_SIZE; i++) {
+		opps.add(new Opportunity(AccountId = acc.Id));
+	}
+
+	opps = (List<Opportunity>) UtilTestData.createSobjects(opps, null);
+
+	// Start Test
+	Test.startTest();
+
+
+	// Stop Test
+	Test.stopTest();
+    }
 }
