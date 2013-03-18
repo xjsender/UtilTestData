@@ -169,7 +169,7 @@ Public class UtilTestData {
         opp.AccountId = opp.AccountId == null ? createSobject(new Account(), 
             UtilTestData.ACCOUNT_RT_PERSON_ACCOUNT) : opp.AccountId;
         opp.Name = opp.Name == null ? 'test' + getRandomFix() : opp.Name;
-        opp.Stage = opp.Stage == null ? 'Open' : opp.Stage;
+        opp.StageName = opp.Stage == null ? 'Open' : opp.StageName;
         opp.CloseDate = opp.CloseDate == null ? System.today() : opp.CloseDate;
 
         return opp;
