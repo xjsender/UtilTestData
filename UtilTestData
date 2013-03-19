@@ -57,12 +57,12 @@ Public class UtilTestData {
     
     // Get UserRoleId by Role Name
     private static Id getUserRoleId(String roleName) {
-        return roleMap.get(roleName);
+        return getUserRoleMapInstance().get(roleName);
     }
     
     // Get ProfileId by Profile Name
     private static Id getProfileId(String profileName) {
-        return profileMap.get(profileName);
+        return getProfileMapInstance().get(profileName);
     }
     
     // Create Test User
@@ -125,7 +125,7 @@ Public class UtilTestData {
             so = initiateContact((Contact) so);
         }
         else if (so instanceof Opportunity) {
-            so = initiateVehicle((Opportunity) so);
+            so = initiateOpportunity((Opportunity) so);
         }
         else if (so instanceof Task) {
             so = intitateTask((Task)so);
