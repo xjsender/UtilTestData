@@ -127,12 +127,6 @@ Public class UtilTestData {
         else if (so instanceof Opportunity) {
             so = initiateOpportunity((Opportunity) so);
         }
-        else if (so instanceof Task) {
-            so = intitateTask((Task)so);
-        }
-        else if (so instanceof Event) {
-            so = initiateEvent((Event)so);
-        }
         
         return so;
     }
@@ -167,7 +161,7 @@ Public class UtilTestData {
 
     private static initiateOpportunity(Opportunity opp) {
         opp.AccountId = opp.AccountId == null ? createSobject(new Account(), 
-            UtilTestData.ACCOUNT_RT_PERSON_ACCOUNT) : opp.AccountId;
+            UtilTestData.ACCOUNT_RT_PERSON_ACCOUNT).Id : opp.AccountId;
         opp.Name = opp.Name == null ? 'test' + getRandomFix() : opp.Name;
         opp.StageName = opp.Stage == null ? 'Open' : opp.StageName;
         opp.CloseDate = opp.CloseDate == null ? System.today() : opp.CloseDate;
@@ -175,8 +169,9 @@ Public class UtilTestData {
         return opp;
     }
 
+    // Get random fix for preventing duplicate
     private static Integer getRandomFix() {
-        return Math.rint(Math.random() * 100000);
+        return Integer.valueOf(Math.rint(Math.random() * 100000));
     }
 
     // Create Unsaved Contact
@@ -184,7 +179,7 @@ Public class UtilTestData {
         con.FirstName = 'Someone';
         con.LastName = 'Benz';
         con.AccountId = con.AccountId == null ? createSobject(new Account(), 
-            UtilTestData.ACCOUNT_RT_PERSON_ACCOUNT) : con.AccountId;
+            UtilTestData.ACCOUNT_RT_PERSON_ACCOUNT).Id : con.AccountId;
 
         return con;
     }
